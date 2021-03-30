@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+      <style>
+        @font-face {
+            font-family: 'MapoFlowerIsland';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/MapoFlowerIslandA.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        *{
+            font-family: 'MapoFlowerIsland';
+        }
+        body{
+            margin:0;
+        }
+        html, body{
+            height:100%;
+        }
+        .nav-link{
+            color: teal;
+            font-size:larger;
+        }
+        .title{
+            width: 100%;
+            height: 100%;
+            background-color: rgb(197, 231, 231);
+            text-align: center;
+            position: relative;
+        }
+        .title h1{
+            font-weight:bold;
+        }
+        .input{
+            width: 300px;
+            margin: auto;
+        }
+        .table{
+            width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    <ul class="nav justify-content-center">
+        <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/signup">Sign up</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/signin/{{ user_id }}">Sign in & Predict</a>
+        </li>
+    </ul>
+    {% if alert_msg %}
+    <div class="alert alert-{{ alert_msg.type }}" role="alert">
+      {{ alert_msg.msg }}
+    </div>
+    {% endif %}
+    </br></br><h1>Prediction🕵🏻‍♀️</h1></br></br>
+    <h5>{{ name }}의 Surf Level은 {{ level }}입니다. Level에 맞는 파도가 있는지 예측해 볼까요?</h5></br>
+    <p>📢예측하고자 하는 target 날짜를 입력해주세요. 꼭 'YYYY-mm-dd'의 형식으로 입력해주시고, 현재 {{ end_date }}안의 날짜까지 예측 가능합니다.</p>
+    <form method="POST" action="/predict/{{ user_id }}" class = input>
+        <input name="target_date" style="margin-bottom:10px" class="form-control" type="text" placeholder="ex)2021-03-30">
+        <input type="submit" class="btn btn-primary" value="Predict" />
+    </form>
+
+    {% if msg %}
+    <div>
+        <p>{{ msg }}</p></br>
+        <p>일출시간 이후 ~ 일몰시간 이전의 시각별 예측 결과:</p>
+    </div>
+    <table class="table">
+    <thead>
+        <tr>
+        <th scope="col">시각</th>
+        <th scope="col">평균 파도높이(m)</th>
+        <th scope="col">최고 파도높이(m)</th>
+        <th scope="col">피리어드(sec)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for predict in prediction %}
+        <tr>
+        <th scope="row">{{ predict['time'] }}</th>
+        <td>{{ predict['avg'] }}</td>
+        <td>{{ predict['hg'] }}</td>
+        <td>{{ predict['sec'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    {% endif %}
+</div>
+</body>
+
+</html>

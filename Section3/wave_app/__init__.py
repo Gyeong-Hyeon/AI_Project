@@ -20,9 +20,11 @@ def create_app(config=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from wave_app.routes import (main_route, user_route)
+    from wave_app.routes import (main_route, predict_route, signin_route, signup_route)
     app.register_blueprint(main_route.bp)
-    app.register_blueprint(user_route.bp, url_prefix='/api')
+    app.register_blueprint(predict_route.bp)
+    app.register_blueprint(signin_route.bp)
+    app.register_blueprint(signup_route.bp)
 
     return app
 
