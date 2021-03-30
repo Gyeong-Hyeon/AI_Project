@@ -23,6 +23,7 @@ from tqdm import tqdm
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
+import os
 
 def make_X(date,starttime,endtime):
     url = 'https://data.kma.go.kr/data/sea/selectBuoyRltmList.do?pgmNo=52'
@@ -70,21 +71,24 @@ def make_X(date,starttime,endtime):
     return data
 
 def predict_avg(X_test):
-    model = joblib.load('md_a.pkl')
+    model_path = os.getcwd() + '/md_a.pkl'
+    model = joblib.load(model_path)
     predict = model.predict(X_test)
     return predict
 
 def predict_hgst(X_test):
-    model = joblib.load('md_h.pkl')
+    model_path = os.getcwd() + '/md_h.pkl'
+    model = joblib.load(model_path)
     predict = model.predict(X_test)
     return predict
 
 def predict_sec(X_test):
-    model = joblib.load('md_s.pkl')
+    model_path = os.getcwd() + '/md_s.pkl'
+    model = joblib.load(model_path)
     predict = model.predict(X_test)
     return predict
 
-def check_condition(prediction, level):
+def check_condition(prediction, level, target_date):
     #레벨별로 파도 나누기
     beg =[]
     inter = []
@@ -131,7 +135,7 @@ def check_condition(prediction, level):
             msg = f"{target_date}의 {','.join(str(e) for e in times)}시에는 서핑하기 좋을 것 같아요 :)"
    
     else:
-        searches = beginner
+        searches = beg
         if len(inter)!=0 or len(adv) !=0:
             msg = f"{target_date}는 파도가 너무 높아서 초급자에게는 위험해요. 다른 날 도전해봐요!"
         elif len(beg)==0:

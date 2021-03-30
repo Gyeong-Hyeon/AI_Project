@@ -53,7 +53,7 @@ def predict_target(user_id=None):
             sec = main_funcs.predict_sec(df)
 
             prediction=[]
-            for i in len(avg):
+            for i in range(len(avg)):
                 prediction.append({
                     'time':int(sunrise)+1+i,
                     'avg':avg[i],
@@ -61,7 +61,8 @@ def predict_target(user_id=None):
                     'sec':sec[i]
                 })
             
-            cmt, searches = main_funcs.check_condition(prediction, level)
+            level = user.level
+            cmt, searches = main_funcs.check_condition(prediction, level, target_date)
 
             for raw in searches:
                 db.session.add(Search(
@@ -73,6 +74,8 @@ def predict_target(user_id=None):
                     user_id=user_id
                 ))
                 db.session.commit()
-        return redirect(url_for('main.predict_index', user_id=user_id, name=user.username, level=user.level, end_date=end_date, msg=cmt, prediction=prediction))
+            
+            breakpoint()
+        return redirect(url_for('main.predict_index', user_id=user_id, name=user.username, level=level, end_date=end_date, msg=cmt, prediction=prediction))
     else:
         return 'Please sign in first'

@@ -2,20 +2,16 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import config
+from dotenv import load_dotenv
+load_dotenv()
 
 db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app(config=None):
     app = Flask(__name__)
-    
-    if app.config["ENV"] == 'production':
-        app.config.from_object('config.ProductionConfig')
-    else:
-        app.config.from_object('config.DevelopmentConfig')
-
-    if config is not None:
-        app.config.update(config)
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
     migrate.init_app(app, db)
