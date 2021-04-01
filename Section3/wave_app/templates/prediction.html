@@ -19,7 +19,16 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-      <style>
+    <script>
+        $(document).ready(function(){
+            $('#loading').hide();
+            $('.input').submit(function(){
+                $('#loading').show();
+                return true;
+            });
+        });    
+    </script> 
+    <style>
         @font-face {
             font-family: 'MapoFlowerIsland';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/MapoFlowerIslandA.woff') format('woff');
@@ -28,48 +37,90 @@
         }
         *{
             font-family: 'MapoFlowerIsland';
+            color:#fff
         }
         body{
             margin:0;
+            text-align: center;
         }
         html, body{
             height:100%;
         }
-        .nav-link{
-            color: teal;
-            font-size:larger;
+        ul{
+            display: block;
+            height: 80px;
+            right: 5%;
         }
-        .title{
+        input{
+            color: rgb(56, 56, 56);
+        }
+        .bg{
             width: 100%;
             height: 100%;
-            background-color: rgb(197, 231, 231);
-            text-align: center;
             position: relative;
+            z-index: 1;
         }
-        .title h1{
-            font-weight:bold;
+        .bg::after{
+            width: 100%;
+            height: 100%;
+            content: "";
+            position: fixed;
+            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("https://images.unsplash.com/photo-1508162252424-e8ad5ef02539?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTR8fHN1cmZ8ZW58MHx8MHw%3D&ixlib=rb-1.2.1&w=1000&q=80");
+            background-size: cover;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .title{
+            top: 8%;
+            font-size:300%;
         }
         .input{
-            width: 300px;
-            margin: auto;
+            width: 400px;
+            display:block;
+            margin:auto;
         }
         .table{
-            width: 800px;
+            width: 600px;
+            text-align: center;
             margin: auto;
+        }
+        #loading{
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            position: fixed;
+            display: block;
+            background: white;
+            z-index: 99;
+            text-align: center;
+            line-height: 300px;
+        }
+        #loading-img{
+            position: absolute;
+            top: 30%;
+            left: 40%;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
-<div class="title">
-    <ul class="nav justify-content-center">
+    <div id="loading">
+        <img id="loading-img", src="https://media1.giphy.com/media/IwTWTsUzmIicM/200.webp?cid=ecf05e47iyf4sy9m7q1yov41acjd1hkgup9kzi3r7ros94br&rid=200.webp" alt="Now Loading..." />
+        <p style="color:rgb(112, 122, 216)">Now Loading...</p>
+   </div>
+   
+   <div class=bg>
+    <ul class="nav justify-content-end">
         <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" style="color: white;" href="/">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/signup">Sign up</a>
+            <a class="nav-link" style="color: white;" href="/signup">Sign up</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/signin/{{ user_id }}">Sign in & Predict</a>
+            <a class="nav-link" style="color:orangered;" href="/signin/{{ user_id }}">Sign in & Predict</a>
         </li>
     </ul>
     {% if alert_msg %}
@@ -77,41 +128,45 @@
       {{ alert_msg.msg }}
     </div>
     {% endif %}
-    </br></br><h1>Prediction🕵🏻‍♀️</h1></br></br>
-    <h5>{{ name }}님의 Surf Level은 {{ level }}입니다. Level에 맞는 파도가 있는지 예측해 볼까요?</h5></br>
-    <p>📢예측하고자 하는 target 날짜를 입력해주세요. 꼭 'YYYY-mm-dd'의 형식으로 입력해주시고, 현재 {{ end_date }}안의 날짜까지 예측 가능합니다.</p>
-    <form method="POST" action="/predict/{{ user_id }}" class = input>
-        <input name="target_date" style="margin-bottom:10px" class="form-control" type="text" placeholder="ex)2021-03-30">
-        <input type="submit" class="btn btn-primary" value="Predict" />
-    </form>
+        <p class=title>Prediction</p>
+        <div class=text>
+            <p style="font-size:170%">Let's predict waves on {{ name }}'s target date</p>
+            <p style="font-size:130%">Enter your target date in the below input box</p>
+            <p style="color:rgb(219, 219, 219)">1. Input date must be in 'YYYY-mm-dd' form</p>
+            <p style="color:rgb(219, 219, 219)">2. Max date can be predcited is {{ end_date }}</p>
+        </div>
 
-    {% if msg %}
-    <div>
-        </br></br><p>{{ msg }}</p></br>
-        <p>일출시간 이후 ~ 일몰시간 이전의 시각별 예측 결과:</p>
+        <form method="POST" action="/predict/{{ user_id }}" class = input>
+            <input name="target_date" style="background-color:transparent; border-color:transparent; margin-bottom:10px" class="form-control" type="text" placeholder="Enter your target date here e.g.)2021-03-30">
+            <input type="submit" style="padding-top:0px; height:30px; text-align:center; display:block; margin: auto;  background-color:tomato; border-color:transparent; color:white" class="btn btn-primary" value="Predict" />
+        </form>
+
+        {% if msg %}
+        <p></p>
+        <p style="font-size:130%; color:tomato; font-weight:bold;">📢{{ msg }}</p></br>
+        <p> Time interval results from sunrise to sunset:</p>
+        <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Avg wave height(m)</th>
+                <th scope="col">Highest wave(m)</th>
+                <th scope="col">Period(sec)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for predict in prediction %}
+            <tr>
+                <th scope="row">{{ predict['time'] }}</th>
+                <td>{{ predict['avg'] }}</td>
+                <td>{{ predict['hg'] }}</td>
+                <td>{{ predict['sec'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        {% endif %}
     </div>
-    <table class="table">
-    <thead>
-        <tr>
-            <th scope="col">시각</th>
-            <th scope="col">평균 파도높이(m)</th>
-            <th scope="col">최고 파도높이(m)</th>
-            <th scope="col">피리어드(sec)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for predict in prediction %}
-        <tr>
-            <th scope="row">{{ predict['time'] }}</th>
-            <td>{{ predict['avg'] }}</td>
-            <td>{{ predict['hg'] }}</td>
-            <td>{{ predict['sec'] }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    </table>
-    {% endif %}
-</div>
 </body>
 
 </html>

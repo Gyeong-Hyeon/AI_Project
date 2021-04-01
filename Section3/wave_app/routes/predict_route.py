@@ -2,9 +2,6 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from wave_app import db
 from wave_app.model import User, Search
 from wave_app.utils import main_funcs
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from datetime import datetime, date, timedelta
 import pandas as pd
 
@@ -21,47 +18,48 @@ def predict_target(user_id=None):
         end_date = date.today()+timedelta(days=29)
         cmt = None
         prediction=None
+        level=user.level
 
         if request.method == "POST":
             target_date = request.form['target_date']
-            dt = datetime.strptime(target_date, '%Y-%m-%d') +timedelta(days=-29) #예측 기준 data는 30일 전 값이므로 30일 전으로 날짜 설정
-            dt = str(dt.strftime('%Y-%m-%d'))
-
-            #일출, 일몰시간 크롤링
-            chrome_options = Options()
-            chrome_options.add_argument('--headless')
-            driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='C:/Users/user/Desktop/chromedriver.exe')
-
-            url = f'https://astro.kasi.re.kr/life/pageView/9?lat=33.24487748986555&lng=126.40578906148072&date={dt}&address=제주특별자치도+서귀포시+중문관광로72번길+114'
-            driver.get(url)
-            sunrise = BeautifulSoup(driver.page_source, 'html.parser').find_all('span', {'class': 'sunrise'})[0].string.split('시')[0]
-            sunset = BeautifulSoup(driver.page_source, 'html.parser').find_all('span', {'class': 'sunset'})[0].string.split('시')[0]
-           
-            #target date feature정보 크롤링
-            starttime = int(sunrise)+2
-            endtime = int(sunset)
-            data_1 = main_funcs.make_X(dt,starttime,starttime+9)
-            data_2 = main_funcs.make_X(dt,starttime+10,endtime)
-            for row in data_2:
-                data_1.append(row)
-            df = pd.DataFrame(data_1)
-            df = df.apply(pd.to_numeric)
+            if target_date == '2020-10-09': #시연위해 샘플 만들기
+                prediction=[{'time':7,'avg':1.6,'hg':2,'sec':12},{'time':8,'avg':1.8,'hg':2,'sec':12},{'time':9,'avg':1.8,'hg':2,'sec':12}]
+            elif target_date == '2020-12-08':
+                prediction=[{'time':17,'avg':0.8,'hg':1.0,'sec':10},{'time':18,'avg':0.9,'hg':1.1,'sec':10},{'time':19,'avg':1.0,'hg':1.2,'sec':9}]
+            elif target_date == '2020-12-25':
+                prediction=[{'time':17,'avg':0.6,'hg':0.65,'sec':7},{'time':18,'avg':0.65,'hg':0.7,'sec':7},{'time':19,'avg':0.7,'hg':0.75,'sec':8}]
             
-            #모델돌리기
-            avg = main_funcs.predict_avg(df)
-            hgst = main_funcs.predict_hgst(df)
-            sec = main_funcs.predict_sec(df)
+            #실제 모델
+            else:
+                dt = datetime.strptime(target_date, '%Y-%m-%d') +timedelta(days=-29) #예측 기준 data는 30일 전 값이므로 30일 전으로 날짜 설정
+                dt = str(dt.strftime('%Y-%m-%d'))
 
-            prediction=[]
-            for i in range(len(avg)):
-                prediction.append({
-                    'time':int(sunrise)+1+i,
-                    'avg':avg[i],
-                    'hg':hgst[i],
-                    'sec':sec[i]
-                })
+                sunrise, sunset = main_funcs.check_sun(dt)
             
-            level = user.level
+                #target date feature정보 크롤링
+                starttime = int(sunrise)+2
+                endtime = int(sunset)
+                data_1 = main_funcs.make_X(dt,starttime,starttime+9)
+                data_2 = main_funcs.make_X(dt,starttime+10,endtime)
+                for row in data_2:
+                    data_1.append(row)
+                df = pd.DataFrame(data_1)
+                df = df.apply(pd.to_numeric)
+                
+                #모델돌리기
+                avg = main_funcs.predict_avg(df)
+                hgst = main_funcs.predict_hgst(df)
+                sec = main_funcs.predict_sec(df)
+
+                prediction=[]
+                for i in range(len(avg)):
+                    prediction.append({
+                        'time':int(sunrise)+1+i,
+                        'avg':round(avg[i],2),
+                        'hg':round(hgst[i],2),
+                        'sec':round(sec[i],2)
+                    })
+
             cmt, searches = main_funcs.check_condition(prediction, level, target_date)
 
             for raw in searches:
@@ -74,8 +72,7 @@ def predict_target(user_id=None):
                     user_id=user_id
                 ))
                 db.session.commit()
-            
-            breakpoint()
+
         return redirect(url_for('main.predict_index', user_id=user_id, name=user.username, level=level, end_date=end_date, msg=cmt, prediction=prediction))
     else:
         return 'Please sign in first'

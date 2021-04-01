@@ -23,7 +23,7 @@ def add_user():
             else:
                 db.session.add(User(
                     username = username,
-                    password = password,
+                    password = str(password),
                     level = level
                 ))
                 db.session.commit()

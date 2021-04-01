@@ -25,12 +25,28 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 import os
 
+def check_sun(dt):
+    #일출, 일몰시간 크롤링
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    driver_path = os.path.join(os.path.dirname(__file__), 'chromedriver.exe')
+    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path)
+
+    url = f'https://astro.kasi.re.kr/life/pageView/9?lat=33.24487748986555&lng=126.40578906148072&date={dt}&address=제주특별자치도+서귀포시+중문관광로72번길+114'
+    driver.get(url)
+    sunrise = BeautifulSoup(driver.page_source, 'html.parser').find_all('span', {'class': 'sunrise'})[0].string.split('시')[0]
+    sunset = BeautifulSoup(driver.page_source, 'html.parser').find_all('span', {'class': 'sunset'})[0].string.split('시')[0]
+    
+    return sunrise,sunset
+
+
 def make_X(date,starttime,endtime):
     url = 'https://data.kma.go.kr/data/sea/selectBuoyRltmList.do?pgmNo=52'
 
     chrome_options = Options()
     chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='C:/Users/user/Desktop/chromedriver.exe')
+    driver_path = os.path.join(os.path.dirname(__file__), 'chromedriver.exe')
+    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path)
     driver.get(url=url)
     time.sleep(1)
 
@@ -71,19 +87,19 @@ def make_X(date,starttime,endtime):
     return data
 
 def predict_avg(X_test):
-    model_path = os.getcwd() + '/md_a.pkl'
+    model_path = os.path.join(os.path.dirname(__file__), 'md_a.pkl')
     model = joblib.load(model_path)
     predict = model.predict(X_test)
     return predict
 
 def predict_hgst(X_test):
-    model_path = os.getcwd() + '/md_h.pkl'
+    model_path = os.path.join(os.path.dirname(__file__), 'md_h.pkl')
     model = joblib.load(model_path)
     predict = model.predict(X_test)
     return predict
 
 def predict_sec(X_test):
-    model_path = os.getcwd() + '/md_s.pkl'
+    model_path = os.path.join(os.path.dirname(__file__), 'md_s.pkl')
     model = joblib.load(model_path)
     predict = model.predict(X_test)
     return predict
@@ -93,6 +109,7 @@ def check_condition(prediction, level, target_date):
     beg =[]
     inter = []
     adv = []
+    times = []
     for raw in prediction:
         if raw['sec'] >6 and raw['avg'] > 0.5:
             if raw['avg'] > 1.5:
@@ -107,44 +124,45 @@ def check_condition(prediction, level, target_date):
     if level == 'Advanced':
         searches = adv
         if len(adv)==0 and len(inter)==0:
-            msg = f"{target_date}는 서핑하기엔 파도 condition이 좋지 않아요 :( 다른 날은 어때요?"
+            msg = f"Not recommend to surf on {target_date} :( Too small waves to surf"
         elif len(adv)==0 and len(inter)!=0:
             for raw in inter:
                 times.append(raw['time'])
-            msg = f"{target_date}는 중급자 수준의 파도가 치는 날이라 조금 낮을 수 있어요 :( 만약 탄다면 {','.join(str(e) for e in times)}시 정도 추천?"
+            msg = f"No good waves for advanced surfers :( You can try waves for intermediate surfers at {','.join(str(e) for e in times)} o'clock on {target_date}"
         elif len(adv)!=0:
             for raw in adv:
                 times.append(raw['time'])
-            msg = f"{target_date}의 {','.join(str(e) for e in times)}시에는 서핑하기 좋을 것 같아요 :)"
+            msg = f"Yay! Take your board at {','.join(str(e) for e in times)} o'clock on {target_date} :)"
         
     elif level == 'Intermediate':
         searches = inter
         if len(adv)==0 and len(inter)==0:
-            msg = f"{target_date}는 서핑하기엔 파도 condition이 좋지 않아요 :( 다른 날은 어때요?"
+            msg = f"Not recommend to surf on {target_date} :( Too small waves to surf"
         elif len(adv)!=0 and len(inter)==0:
             for raw in adv:
                 times.append(raw['time'])
-            msg = f"{target_date}는 숙련자 수준의 파도가 치는 날이라 위험할 수 있어요!! 조심해서 {','.join(str(e) for e in times)}시 정도를 노려보세요"
+            msg = f"No suitable waves for intermediate surfers :( You can try waves for advanced surfers at {','.join(str(e) for e in times)} o'clock on {target_date} but be careful!!"
         elif len(beg)!=0 and len(inter)==0:
             for raw in beg:
                 times.append(raw['time'])
-            msg = f"{target_date}는 초급자 수준의 파도가 치는 날이라 조금 낮을 수 있어요 :( 만약 탄다면 {','.join(str(e) for e in times)}시 정도 추천?"
+            msg = f"No suitable waves for intermediate surfers :( You can try waves for beginners at {','.join(str(e) for e in times)} o'clock on {target_date}"
         elif len(inter)!=0:
             for raw in inter:
                 times.append(raw['time'])
-            msg = f"{target_date}의 {','.join(str(e) for e in times)}시에는 서핑하기 좋을 것 같아요 :)"
+            msg = f"Yay! Take your board at {','.join(str(e) for e in times)} o'clock on {target_date} :)"
    
     else:
         searches = beg
         if len(inter)!=0 or len(adv) !=0:
-            msg = f"{target_date}는 파도가 너무 높아서 초급자에게는 위험해요. 다른 날 도전해봐요!"
+            msg = f"Waves are too big for beginners on {target_date}. Try another day"
         elif len(beg)==0:
-            msg = f"{target_date}는 서핑하기엔 파도가 좋지 않네요. 대신 패들 연습 어때요?"
+            msg = f"Bad waves on {target_date} :( Better to practice paddling"
         elif len(beg)!=0:
             for raw in beg:
                 times.append(raw['time'])
-            msg = f"{target_date}의 {','.join(str(e) for e in times)}시에는 서핑하기 좋을 것 같아요 :)"
+            msg = f"Yay! Take your board at {','.join(str(e) for e in times)} o'clock on {target_date} :)"
 
     return msg, searches
+
 
 

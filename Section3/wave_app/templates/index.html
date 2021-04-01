@@ -19,7 +19,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-      <style>
+    <style>
         @font-face {
             font-family: 'MapoFlowerIsland';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/MapoFlowerIslandA.woff') format('woff');
@@ -28,6 +28,7 @@
         }
         *{
             font-family: 'MapoFlowerIsland';
+            color:#fff
         }
         body{
             margin:0;
@@ -35,56 +36,56 @@
         html, body{
             height:100%;
         }
-        a{
-            color: teal;
-            font-size:larger;
+        ul{
+            display: block;
+            height: 80px;
+            right: 5%;
         }
-        .title{
+        .bg{
             width: 100%;
             height: 100%;
-            text-align: center;
             position: relative;
+            z-index: 1;
         }
-        .title::before{
+        .bg::after{
             width: 100%;
             height: 100%;
             content: "";
-            position: absolute;
-            background: url("https://t1.daumcdn.net/cfile/tistory/997FDF385EF00E3432");
+            position: fixed;
+            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("https://www.surfline.com/cdn-cgi/image/w=640,q=85,f=auto,fit=contain/https://d14fqx6aetz9ka.cloudfront.net/wp-content/uploads/2021/01/18182546/JJF_SSS_Bielmann_02_pb.jpg");
             background-size: cover;
             top: 0;
             left: 0;
-            opacity: 0.5;
+            z-index: -1;
         }
-        .title h1{
-            color: purple;
-            font-weight: bold;
-            text-align: center;
-            line-height: 300px;  
-            position: relative;
-        }
-        .title h5{
-            font-weight: bold;
-            font-size:larger;
+        .text{
+            position:fixed;
+            bottom: 10%;
+            left: 5%;
+            font-size: 220%;
         }
     </style>
 </head>
 
 <body>
-    <ul class="nav justify-content-center">
+    <div class="bg">
+    <ul class="nav justify-content-end">
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" style="color:orangered;" aria-current="page" href="#">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/signup">Sign up</a>
+            <a class="nav-link" style="color:white;" href="/signup">Sign up</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/signin">Sign in & Predict</a>
+            <a class="nav-link" style="color:white;" href="/signin">Sign in & Predict</a>
         </li>
     </ul>
-    <div class='title'>
-        <h1>Plan your surf trip to Jungmun beach🏄🏻‍♀️</h1><br/>
-        <h5>한달 뒤의 파도 상황을 예측하여 제주도 중문해변으로의 서핑 트립을 미리 계획하세요!</h5><br/>
+        <div class='text'>
+            <p style="top:30px">Plan your</p>
+            <p style="top:40px">Surf trip</p>
+            <p style="top:40px">To</p>
+            <p style="top:30px">Jungmun beach‍</p>
+        </div>
     </div>
 </body>
 

@@ -28,6 +28,7 @@
         }
         *{
             font-family: 'MapoFlowerIsland';
+            color:#fff
         }
         body{
             margin:0;
@@ -35,42 +36,72 @@
         html, body{
             height:100%;
         }
-        .nav-link{
-            color: teal;
-            font-size:larger;
+        ul{
+            display: block;
+            height: 80px;
+            right: 5%;
         }
-        .title{
+        input{
+            color: rgb(105, 105, 105);
+        }
+        .bg{
             width: 100%;
             height: 100%;
-            background-color: rgb(197, 231, 231);
-            text-align: center;
             position: relative;
+            z-index: 1;
         }
-        .title h1{
-            font-weight:bold;
+        .bg::after{
+            width: 100%;
+            height: 100%;
+            content: "";
+            position: fixed;
+            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("https://www.surfline.com/cdn-cgi/image/w=640,q=85,f=auto,fit=contain/https://d14fqx6aetz9ka.cloudfront.net/wp-content/uploads/2021/01/18182546/JJF_SSS_Bielmann_02_pb.jpg");
+            background-size: cover;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .title{
+            position:fixed;
+            top: 20%;
+            left:5%;
+            font-size:300%;
         }
         .input{
-            width: 500px;
-            margin: auto;
+            position: fixed;
+            top: 35%;
+            left: 8%;
+            width: 400px;
+            display:block;
+            margin:auto;
         }
-        .table{
-            width: 800px;
+        .history{
+            position: fixed;
+            top: 40%;
+            right:5%;
+            font-size: 250%;
+        }
+        .historylist{
+            position: fixed;
+            top: 50%;
+            right: 2%;
+            width: 700px;
+            text-align: center;
             margin: auto;
-            background-color: rgb(189, 180, 180)
         }
     </style>
 </head>
 <body>
-<div class="title">
-    <ul class="nav justify-content-center">
+    <div class="bg">
+    <ul class="nav justify-content-end">
         <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" style="color: white;" href="/">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/signup">Sign up</a>
+            <a class="nav-link" style="color: white;" href="/signup">Sign up</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Sign in & Predict</a>
+            <a class="nav-link active" style="color:orangered;" aria-current="page" href="#">Sign in & Predict</a>
         </li>
     </ul>
     {% if alert_msg %}
@@ -78,56 +109,58 @@
       {{ alert_msg.msg }}
     </div>
     {% endif %}
-
-    </br></br><h1>Sign in🙋‍♀️🙋‍♂️</h1></br></br>
+    <p class=title>Sign in</p></br>
+    </br>
     <form method="POST" action="/signin" class='input'>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-default">Username</span>
+                <span class="input-group-text" id="inputGroup-sizing-default" style="background-color:transparent; border-color:transparent; color:white">Username :</span>
             </div>
-            <input name=username type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            <input name=username type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"  style="background-color:transparent; border-color:transparent;" placeholder="Enter here">
         </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-default">Password</span>
+                <span class="input-group-text" id="inputGroup-sizing-default" style="background-color:transparent; border-color:transparent; color:white;">Password :</span>
             </div>
-            <input name=password type="password"  class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            <input name=password type="password"  class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"  style="background-color:transparent; border-color:transparent;" placeholder="Enter here">
         </div>
-        <input type="submit" class="btn btn-primary" value="Sign in" />
+        <input type="submit" class="btn btn-primary"  style="padding-top:0px; height:30px; text-align:center; display:block; margin: auto;  background-color:tomato; border-color:transparent; color:white" value="Submit" />
     </form>
     {% if user_id %}
     <div>
-        </br><p>현재까지 예측 의뢰했던 날짜들 중 서핑하기 좋은 시간들의 list입니다📜</p></br>
+        </br><p class="history">Search history📜</p></br>
     </div>
-    <table class="table">
-    <thead>
-        <tr>
-        <th scope="col">예측의뢰날짜</th>
-        <th scope="col">서핑 최적시각</th>
-        <th scope="col">평균 파도높이(m)</th>
-        <th scope="col">최고 파도높이(m)</th>
-        <th scope="col">피리어드(sec)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% if history %}
-        {% for hist in history %}
-        <tr>
-        <th scope="row">{{ hist.date }}</th>
-        <td>{{ hist.time }}</td>
-        <td>{{ hist.avg }}</td>
-        <td>{{ hist.hg }}</td>
-        <td>{{ hist.sec }}</td>
-        </tr>
-        {% endfor %}
-        {% endif %}
-    </tbody>
-    </table>
-    </br></br><a class="btn btn-secondary", href='/predict/{{ user_id }}'>
-        예측하러가기
-    </a>
+    <div class=historylist>
+        <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">Target Date</th>
+            <th scope="col">Best time to surf</th>
+            <th scope="col">Avg height(m)</th>
+            <th scope="col">Highest wave(m)</th>
+            <th scope="col">Period(sec)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if history %}
+            {% for hist in history %}
+            <tr>
+            <th scope="row">{{ hist.date }}</th>
+            <td>{{ hist.time }}</td>
+            <td>{{ hist.avg }}</td>
+            <td>{{ hist.hg }}</td>
+            <td>{{ hist.sec }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+        </table>
+        </br></br><a class="btn btn-secondary" style="padding-top:0px; height:30px;" href='/predict/{{ user_id }}'>
+            Go to predict
+        </a>
+    </div>
     {% endif %}
-</div>
+    </div>
 </body>
 
 </html>
