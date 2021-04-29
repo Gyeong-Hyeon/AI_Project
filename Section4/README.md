@@ -1,7 +1,7 @@
 🔥Facial Emotion Recognition(FER) using deep learning-Tensorflow🔥 
 ===============
 
-<center><img width="500" alt="abouttime" src="https://user-images.githubusercontent.com/75717579/116502006-4b5c7c80-a8ed-11eb-958c-bbf70fc4ba90.gif"></center>
+<p align='center'><img width="500" alt="abouttime" src="https://user-images.githubusercontent.com/75717579/116502006-4b5c7c80-a8ed-11eb-958c-bbf70fc4ba90.gif"></p>
 
 Introduction 🙋
 ---------------
@@ -44,11 +44,11 @@ How to test? 🎯
 
 **VERSION 1)** Draw a square box around the detected faces and print only one label with highest prediction rate > Please use ```videosq.py```file for testing.
 
-<center><img width="300" alt="neu" src="https://user-images.githubusercontent.com/75717579/116504181-ba889f80-a8f2-11eb-9af8-32f4c44417fc.gif"></center>
+<p align='center'><img width="400" alt="neu" src="https://user-images.githubusercontent.com/75717579/116504181-ba889f80-a8f2-11eb-9af8-32f4c44417fc.gif"></p>
 
 **VERSION 2)** Print all labels with predicted percentage of each class on a translucent box. > Please use ```test.py```file for testing.
 
-<p align='center'><img width="400" alt="https://user-images.githubusercontent.com/75717579/116504426-3682e780-a8f3-11eb-844a-e4a138b20980.gif"></p>
+<p align='center'><img width="400" alt="emmastone" src="https://user-images.githubusercontent.com/75717579/116504426-3682e780-a8f3-11eb-844a-e4a138b20980.gif"></p>
 
 
 2. Select a model you want to use.
