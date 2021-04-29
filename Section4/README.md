@@ -1,7 +1,7 @@
 🔥Facial Emotion Recognition(FER) using deep learning-Tensorflow🔥 
 ===============
 
-<center><img width="300" alt="abouttime" src="https://user-images.githubusercontent.com/75717579/116502006-4b5c7c80-a8ed-11eb-958c-bbf70fc4ba90.gif"></center>
+<center><img width="500" alt="abouttime" src="https://user-images.githubusercontent.com/75717579/116502006-4b5c7c80-a8ed-11eb-958c-bbf70fc4ba90.gif"></center>
 
 Introduction 🙋
 ---------------
