@@ -40,7 +40,7 @@ About python files 📁
 How to test? 🎯
 -----------------
 
-1. Select which type of prediction you want to print on your video.
+**1. Select which type of prediction you want to print on your video.**
 
 **VERSION 1)** Draw a square box around the detected faces and print only one label with highest prediction rate > Please use ```videosq.py```file for testing.
 
@@ -51,7 +51,7 @@ How to test? 🎯
 <p align='center'><img width="400" alt="emmastone" src="https://user-images.githubusercontent.com/75717579/116504426-3682e780-a8f3-11eb-844a-e4a138b20980.gif"></p>
 
 
-2. Select a model you want to use.
+**2. Select a model you want to use.**
 
 * If you want to use my model, you can use model_DCNN.yaml and model_DCNN.h5
 * If you want to use a model trained from others:
@@ -59,23 +59,23 @@ How to test? 🎯
     If you want to use any other model, please save model file & weight file in ```Models``` folder.
     And change the code for loading model and weight (```videosq.py - #14 & #15``` and ```test.py - #16~#18```)
 
-3. Input your video name: ```cv2.VideoCapture('yourvideoname')```
+**3. Input your video name: ```cv2.VideoCapture('yourvideoname')```**
 
-4. Run ```python test/test.py``` or ```python test/videosq.py``` in your terminal
+**4. Run ```python test/test.py``` or ```python test/videosq.py``` in your terminal**
 
-5. Output video will be saved in ```test/output``` folder once the process is finished
+**5. Output video will be saved in ```test/output``` folder once the process is finished**
 
 
 How to train? 🤹
 ------------------
 
-1. Save your data set in ```data``` folder
+**1. Save your data set in ```data``` folder**
 
-2. Change ```line#10 of train.py``` to your dataset name
+**2. Change ```line#10 of train.py``` to your dataset name**
 
-3. Run ```python train/train.py``` in your terminal
+**3. Run ```python train/train.py``` in your terminal**
 
-4. The CNN model & weight trained by your dataset will be saved in ```models``` folder once training is finished
+**4. The CNN model & weight trained by your dataset will be saved in ```models``` folder once training is finished**
 
 
 _Feedback is always welcome_ 🥳
